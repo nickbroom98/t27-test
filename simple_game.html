@@ -1,0 +1,95 @@
+<html>
+    <head>
+        <title>
+            Simple Game
+        </title>
+    </head>
+    <body>
+        <div id="app">
+                <h1>Current mystery value: {{ mysteryCard }} </h1>
+                <h3>Current card: {{ currentCard }} </h3>
+                <p>Your Score: {{score}}</p>
+            <p>
+                {{ cards }}
+            </p>
+
+            <button @click="guessHigher">
+                Higher
+            </button>
+
+            <button @click="guessLower">
+                Lower
+            </button>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+        <script>
+            new Vue({
+                el: '#app',
+                data: function(){
+                    return {
+                        cards: [],
+                        mysteryIndex: 0,
+                        score: 0
+                    }
+                },
+                // Called when the app is initiliased
+                computed: {
+                    mysteryCard: function(){
+                        return this.cards[this.mysteryIndex];
+                    },
+                    currentCard: function(){
+                        return this.cards[this.mysteryIndex -1];
+                    }
+                },
+                mounted: function(){
+                    this.initGame();
+                },
+                methods: {
+                    initGame: function (){
+                        this.initCards();
+                        this.shuffleCards();
+                        this.moveToNextCard();
+                        this.score = 0;
+                    },
+                    initCards: function(){
+                        this.mysteryIndex = 0;
+                        this.cards = [];
+                        for(let i = 1; i <= 13; i ++){
+                            this.cards.push(i);
+                        }
+                    },
+                    shuffleCards: function () {
+                    for (var i = this.cards.length - 1; i > 0; i--) {
+                        var j = Math.floor(Math.random() * (i + 1));
+                        var temp = this.cards[i];
+                        this.cards[i] = this.cards[j];
+                        this.cards[j] = temp;
+                        }
+                    },
+                    moveToNextCard: function(){
+                        this.mysteryIndex ++;
+                    },
+                    guessHigher: function(){
+                        let correct = this.mysteryCard > this.currentCard;
+                        this.handleGuess(correct);
+                    },
+                    guessLower: function(){
+                        let correct = this.mysteryCard < this.currentCard;
+                        this.handleGuess(correct);
+                    },
+                    handleGuess: function (correct){
+                        if(correct) {
+                            this.moveToNextCard();
+                            this.score ++;
+                        }
+                        else this.endGame();
+                    },
+                    endGame: function (){
+                        this.initGame();
+                        alert("You failed you fool");
+                    }
+                }
+            });
+        </script>
+    </body>
+</html>
